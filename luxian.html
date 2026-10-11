@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>行军路线 · 从掖县到长津湖</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-banner">
+  <h1>寻访笔记 · 行军路线</h1>
+  <div class="sub">根据部队番号与村志记录推定</div>
+</header>
+
+<div class="wrap" style="max-width:1120px">
+  <div class="panel">
+    <p class="doc-meta">第二十七军 · 一九五〇年十一月入朝 · 此为他走过的路</p>
+
+    <div class="map-stage terrain-stage" id="map-thumb" title="点击地图，铺开查看">
+      <img src="assets/luxian-map.jpg" alt="长津湖战役东线行军路线地形图">
+      <span class="thumb-zoom">点 击 铺 开 查 看</span>
+    </div>
+    <p style="text-align:center; color:var(--ink-light); font-size:.85rem; margin-top:8px">
+      地形为艺术化地貌演绎，非精确测绘用途。
+    </p>
+  </div>
+</div>
+
+<!-- 铺开的大图：一步一步走这条路 -->
+<div class="map-lightbox" id="map-lightbox" aria-hidden="true">
+  <div class="lb-backdrop" id="lb-backdrop"></div>
+  <div class="lb-body">
+    <button class="lb-close" id="lb-close">✕ 收 起</button>
+    <div class="terrain-stage lb-stage">
+      <img src="assets/luxian-map.jpg" alt="长津湖战役东线行军路线地形图（大图）">
+      <span class="map-dot" style="left:11.3%; top:77.5%"></span>
+      <span class="map-dot" style="left:28.9%; top:68.2%"></span>
+      <span class="map-dot" style="left:45.2%; top:57.8%"></span>
+      <span class="map-dot" style="left:61.6%; top:48.5%"></span>
+      <span class="map-dot" style="left:81.6%; top:33.8%"></span>
+    </div>
+    <p style="text-align:center; color:var(--ink-light); font-size:.82rem; margin-top:10px">
+      地形为艺术化地貌演绎，非精确测绘用途。
+    </p>
+
+    <div class="map-caption" id="map-caption"></div>
+    <button class="map-next" id="map-next">继 续 →</button>
+
+    <div class="map-done" id="map-done">
+      <div style="letter-spacing:.4em; color:var(--ink-light)">第 一 幕 · 离 家　完</div>
+      <div class="t2">第 二 幕 · 异 国</div>
+      <p style="color:var(--ink-light); font-family:'FangSong','仿宋',serif">
+        路走到了尽头。剩下的，在他的家书和他的日记里。<br>
+        爷爷的木匣，你已经能够打开了。
+      </p>
+      <p style="margin-top:22px"><a href="dangan.html" style="font-size:1.05rem; letter-spacing:.2em">打开木匣 →</a></p>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <span class="count">已找到线索 <span class="js-count">0</span> / 18</span>
+  <a href="guanyu.html">本站为艺术创作 · 点击查看声明</a>
+</footer>
+
+<button id="note-btn">寻访笔记</button>
+<div id="note-panel"><h3>寻访笔记</h3><ul id="note-list"></ul></div>
+
+<style>
+/* 缩略图舞台 */
+.terrain-stage { position: relative; max-width: 860px; margin: 0 auto; }
+.terrain-stage img { width: 100%; display: block; box-shadow: 0 8px 26px rgba(60, 40, 15, .35); }
+#map-thumb { cursor: pointer; }
+#map-thumb::after {
+  content: ""; position: absolute; inset: 0; border: 2px solid rgba(158, 43, 37, 0);
+  transition: border-color .35s, box-shadow .35s; pointer-events: none;
+}
+#map-thumb:hover::after { border-color: rgba(158, 43, 37, .65); box-shadow: inset 0 0 0 3px rgba(243, 236, 215, .5); }
+.thumb-zoom {
+  position: absolute; right: 14px; bottom: 12px; padding: 6px 14px;
+  background: rgba(30, 18, 10, .72); color: #f3ecd7; font-size: .82rem;
+  letter-spacing: .3em; font-family: "FangSong", "仿宋", serif;
+}
+/* 铺开浮层 */
+.map-lightbox { display: none; }
+.map-lightbox.open { display: flex; align-items: center; justify-content: center; }
+.lb-backdrop { position: fixed; inset: 0; background: rgba(24, 14, 8, .9); z-index: 80; }
+.lb-body {
+  position: fixed; z-index: 81; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: min(1500px, 95vw); max-height: 94vh; overflow: auto;
+  background: #f5efdd; border: 1px solid #b8a67a; padding: 26px 30px 34px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .6);
+}
+.lb-stage { max-width: 100%; }
+.lb-close {
+  position: absolute; top: 10px; right: 12px; background: none;
+  border: 1px solid var(--ink-light); color: var(--ink);
+  padding: 6px 16px; font-family: "FangSong", "仿宋", serif; letter-spacing: .2em; cursor: pointer;
+}
+/* 途经点热点（仅大图） */
+.map-dot {
+  position: absolute; width: 20px; height: 20px; margin: -10px 0 0 -10px;
+  border-radius: 50%; background: rgba(216, 207, 186, .85);
+  border: 2px solid rgba(255, 255, 255, .8);
+  box-shadow: 0 0 0 3px rgba(158, 43, 37, .25);
+  transition: all .6s; pointer-events: none;
+}
+.map-dot.on {
+  background: #9e2b25; border-color: #f3ecd7;
+  box-shadow: 0 0 0 5px rgba(158, 43, 37, .35), 0 0 14px rgba(158, 43, 37, .6);
+}
+</style>
+<script src="js/gsap.min.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>长津湖地区 · 气象台</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="qx2-body">
+
+<header class="qx2-topbar">
+  <div class="qx2-brand">
+    <svg viewBox="0 0 40 40" class="qx2-logo" aria-hidden="true">
+      <circle cx="20" cy="20" r="18" fill="none" stroke="currentColor" stroke-width="2.5"/>
+      <path d="M12 24 a7 7 0 0 1 7 -7 a8 8 0 0 1 15 2 a6 6 0 0 1 -3 11 h-16 a6 6 0 0 1 -3 -6z" fill="currentColor"/>
+    </svg>
+    <span>长津湖地区 · 气象台</span>
+  </div>
+  <nav class="qx2-tabs">
+    <span class="qx2-tab active">实时天气</span>
+    <span class="qx2-tab">历史查询</span>
+    <span class="qx2-tab">观测档案</span>
+  </nav>
+  <div class="qx2-clock" id="qx2-clock"></div>
+  <a class="qx2-back" href="index.html" onclick="if(history.length>1){history.back();return false;}">← 返回上一页</a>
+</header>
+
+<div class="qx2-querybar">
+  <label for="qx2-input">历史天气查询</label>
+  <input id="qx2-input" type="text" placeholder="输入要查询的历史日期" autocomplete="off">
+  <button id="qx2-cal-btn" type="button" title="打开日历">▦</button>
+  <button id="qx2-go" type="button">查　询</button>
+  <div class="qx-cal" id="qx2-cal" hidden>
+    <div class="qx-cal-head">
+      <span>一九五〇年 · 十一月</span>
+      <button id="qx2-cal-close" type="button">✕</button>
+    </div>
+    <div class="qx-cal-grid" id="qx2-cal-grid"></div>
+    <div class="qx-cal-note">档案库仅数字化了本年本月的部分观测。</div>
+  </div>
+</div>
+<div class="qx2-msg" id="qx2-msg" hidden></div>
+
+<main class="qx2-grid">
+
+  <!-- 左：逐时段 -->
+  <section class="qx2-card qx2-hours">
+    <h3 id="qx2-hours-title">24小时预报</h3>
+    <ul id="qx2-hours-list"></ul>
+  </section>
+
+  <!-- 中：主卡 -->
+  <section class="qx2-card qx2-hero">
+    <div class="qx2-hero-place" id="qx2-place">长津湖地区（今朝鲜境内）</div>
+    <div class="qx2-hero-main">
+      <div class="qx2-hero-temp" id="qx2-temp">--</div>
+      <div class="qx2-hero-icon" id="qx2-icon"></div>
+    </div>
+    <div class="qx2-hero-text" id="qx2-weathertext"></div>
+    <div class="qx2-hero-date" id="qx2-herodate"></div>
+    <div class="qx2-hero-meta" id="qx2-meta"></div>
+  </section>
+
+  <!-- 右：逐日 + 雷达/电报 -->
+  <section class="qx2-right">
+    <div class="qx2-card qx2-days">
+      <h3 id="qx2-days-title">7日预报</h3>
+      <div class="qx2-days-row" id="qx2-days-row"></div>
+    </div>
+    <div class="qx2-card qx2-radar" id="qx2-radar-card">
+      <h3 id="qx2-radar-title">雷达云图</h3>
+      <div id="qx2-radar-body"></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- 底部预警条 -->
+<section class="qx2-alert" id="qx2-alert"></section>
+
+<footer class="site-footer">
+  <span class="count">已找到线索 <span class="js-count">0</span> / 18</span>
+  <a href="guanyu.html">本站为艺术创作 · 点击查看声明</a>
+</footer>
+
+<button id="note-btn">寻访笔记</button>
+<div id="note-panel"><h3>寻访笔记</h3><ul id="note-list"></ul></div>
+
+<script src="js/gsap.min.js"></script>
+<script src="js/main.js"></script>
+<script>
+(function () {
+  const SHOT = new URLSearchParams(location.search).get("shot");
+  if (SHOT) {
+    const st = document.createElement("style");
+    st.textContent = ".qx2-body::before{transition:none!important}";
+    document.head.appendChild(st);
+  }
+  const TARGET = { y: 1950, m: 11, d: 27 };
+
+  /* ---------- 图标（内联 SVG） ---------- */
+  const ICONS = {
+    sun: '<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="13" fill="#f6b93b"/><g stroke="#f6b93b" stroke-width="4" stroke-linecap="round"><line x1="32" y1="8" x2="32" y2="16"/><line x1="32" y1="48" x2="32" y2="56"/><line x1="8" y1="32" x2="16" y2="32"/><line x1="48" y1="32" x2="56" y2="32"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="43" y1="43" x2="49" y2="49"/><line x1="15" y1="49" x2="21" y2="43"/><line x1="43" y1="21" x2="49" y2="15"/></g></svg>',
+    cloud: '<svg viewBox="0 0 64 64"><path d="M18 44 a10 10 0 0 1 10 -10 a12 12 0 0 1 22 3 a8 8 0 0 1 -4 14 h-24 a8 8 0 0 1 -4 -7z" fill="#e8eef2"/></svg>',
+    suncloud: '<svg viewBox="0 0 64 64"><circle cx="24" cy="22" r="9" fill="#f6b93b"/><g stroke="#f6b93b" stroke-width="3" stroke-linecap="round"><line x1="24" y1="7" x2="24" y2="11"/><line x1="9" y1="22" x2="13" y2="22"/><line x1="13" y1="11" x2="16" y2="14"/><line x1="35" y1="11" x2="32" y2="14"/></g><path d="M20 50 a9 9 0 0 1 9 -9 a11 11 0 0 1 20 3 a7 7 0 0 1 -4 12 h-22 a7 7 0 0 1 -3 -6z" fill="#e8eef2"/></svg>',
+    snow: '<svg viewBox="0 0 64 64"><path d="M18 36 a10 10 0 0 1 10 -10 a12 12 0 0 1 22 3 a8 8 0 0 1 -4 14 h-24 a8 8 0 0 1 -4 -7z" fill="#e8eef2"/><g stroke="#bfe3f2" stroke-width="3" stroke-linecap="round"><line x1="22" y1="50" x2="22" y2="56"/><line x1="34" y1="52" x2="34" y2="58"/><line x1="46" y1="50" x2="46" y2="56"/></g></svg>',
+    coldsun: '<svg viewBox="0 0 64 64"><circle cx="32" cy="26" r="11" fill="#f2f6f8" stroke="#b7d4e4" stroke-width="3"/><g stroke="#b7d4e4" stroke-width="3.5" stroke-linecap="round"><line x1="32" y1="6" x2="32" y2="12"/><line x1="12" y1="26" x2="18" y2="26"/><line x1="52" y1="26" x2="46" y2="26"/><line x1="17" y1="11" x2="22" y2="16"/><line x1="47" y1="11" x2="42" y2="16"/></g><g stroke="#8fc7e0" stroke-width="3" stroke-linecap="round"><line x1="20" y1="48" x2="20" y2="56"/><line x1="32" y1="50" x2="32" y2="58"/><line x1="44" y1="48" x2="44" y2="56"/></g></svg>'
+  };
+
+  /* ---------- 元素 ---------- */
+  const $ = id => document.getElementById(id);
+  const clock = $("qx2-clock"), hoursTitle = $("qx2-hours-title"), hoursList = $("qx2-hours-list");
+  const tempEl = $("qx2-temp"), iconEl = $("qx2-icon"), textEl = $("qx2-weathertext"),
+        heroDate = $("qx2-herodate"), metaEl = $("qx2-meta"), placeEl = $("qx2-place");
+  const daysTitle = $("qx2-days-title"), daysRow = $("qx2-days-row");
+  const radarCard = $("qx2-radar-card"), radarTitle = $("qx2-radar-title"), radarBody = $("qx2-radar-body");
+  const alertBox = $("qx2-alert"), msg = $("qx2-msg");
+
+  const now = new Date();
+  const WK = ["日", "一", "二", "三", "四", "五", "六"];
+  const NUM = ["一","二","三","四","五","六","七","八","九","十","十一","十二"];
+
+  /* ---------- 今日数据（按本机日期给示意值） ---------- */
+  const mNow = now.getMonth() + 1;
+  let todayMain, todayIcon, todayHi, todayLo, todaySub;
+  if (mNow >= 3 && mNow <= 5)      { todayMain = "晴间多云"; todayIcon = "suncloud"; todayHi = 20; todayLo = 9;  todaySub = "南风2级 · 空气良"; }
+  else if (mNow >= 6 && mNow <= 8) { todayMain = "多云";     todayIcon = "cloud";    todayHi = 30; todayLo = 22; todaySub = "东南风3级 · 闷热"; }
+  else if (mNow >= 9 && mNow <= 11){ todayMain = "多云转晴"; todayIcon = "suncloud"; todayHi = 14; todayLo = 5;  todaySub = "北风3级 · 微凉"; }
+  else                             { todayMain = "晴";       todayIcon = "sun";      todayHi = 3;  todayLo = -6; todaySub = "西北风4级 · 干冷"; }
+
+  const HOURS_NOW = [
+    { t: "现在", icon: todayIcon, temp: Math.round((todayHi + todayLo) / 2) },
+    { t: "10时", icon: "suncloud", temp: todayHi - 1 },
+    { t: "13时", icon: "sun", temp: todayHi },
+    { t: "16时", icon: "suncloud", temp: todayHi - 2 },
+    { t: "19时", icon: "cloud", temp: todayHi - 5 },
+    { t: "22时", icon: "cloud", temp: todayLo + 2 }
+  ];
+  const DAYS_NOW = (function () {
+    const arr = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
+      arr.push({ dow: i === 0 ? "今天" : "周" + WK[d.getDay()], date: (d.getMonth() + 1) + "/" + d.getDate(),
+                 icon: ["sun", "suncloud", "cloud", "suncloud", "sun", "cloud", "suncloud"][i],
+                 hi: todayHi + Math.round(3 * Math.sin(i * 1.3)), lo: todayLo + Math.round(2 * Math.cos(i)) });
+    }
+    return arr;
+  })();
+
+  /* ---------- 1950-11-27 数据 ---------- */
+  const HOURS_HIST = [
+    { t: "凌晨", icon: "snow", temp: -30 },
+    { t: "午后", icon: "coldsun", temp: -24 },
+    { t: "黄昏", icon: "snow", temp: -28 },
+    { t: "夜半", icon: "snow", temp: -40 }
+  ];
+  const TABLE = [
+    { d: "二十日", icon: "snow", t: -12 },
+    { d: "二十二日", icon: "snow", t: -18 },
+    { d: "二十四日", icon: "coldsun", t: -23 },
+    { d: "二十六日", icon: "coldsun", t: -25 },
+    { d: "二十七日", icon: "coldsun", t: -27 }
+  ];
+  const TELEGRAPH =
+    "GMFB 271800 急\n" +
+    "长津湖地区台　一九五〇年十一月二十七日一八〇〇报\n" +
+    "天气　晴\n" +
+    "日平均气温　零下二七\n" +
+    "战区夜间极端最低　零下四十\n" +
+    "—以上—";
+
+  /* ---------- 渲染 ---------- */
+  function renderHours(title, rows) {
+    hoursTitle.textContent = title;
+    hoursList.innerHTML = rows.map(r =>
+      `<li><span class="qx2-h-time">${r.t}</span><span class="qx2-h-icon">${ICONS[r.icon]}</span><span class="qx2-h-temp">${r.temp}℃</span></li>`
+    ).join("");
+  }
+  function renderDays(title, cards) {
+    daysTitle.textContent = title;
+    daysRow.innerHTML = cards.map(c =>
+      `<div class="qx2-day${c.mark ? " mark" : ""}">
+        <div class="qx2-day-dow">${c.dow}</div>
+        <div class="qx2-day-date">${c.date}</div>
+        <div class="qx2-day-icon">${ICONS[c.icon]}</div>
+        <div class="qx2-day-temp">${c.hi}° / ${c.lo}°</div>
+      </div>`
+    ).join("");
+  }
+  function renderRadarNow() {
+    radarTitle.textContent = "雷达云图";
+    radarBody.innerHTML =
+      `<svg viewBox="0 0 200 200" class="qx2-radar-svg">
+        <circle cx="100" cy="100" r="86" fill="none" stroke="rgba(255,255,255,.25)"/>
+        <circle cx="100" cy="100" r="62" fill="none" stroke="rgba(255,255,255,.2)"/>
+        <circle cx="100" cy="100" r="38" fill="none" stroke="rgba(255,255,255,.15)"/>
+        <circle cx="100" cy="100" r="14" fill="none" stroke="rgba(255,255,255,.15)"/>
+        <g stroke="rgba(255,255,255,.12)"><line x1="100" y1="14" x2="100" y2="186"/><line x1="14" y1="100" x2="186" y2="100"/></g>
+        <path d="M100,100 L100,14 A86,86 0 0 1 166,40 z" fill="rgba(159,216,232,.3)" class="qx2-sweep"/>
+        <circle cx="128" cy="66" r="5" fill="rgba(255,255,255,.5)"/>
+        <circle cx="70" cy="120" r="4" fill="rgba(255,255,255,.35)"/>
+      </svg>
+      <div class="qx2-radar-note">长津湖地区上空 · 回波正常</div>`;
+  }
+  function renderRadarHist() {
+    radarTitle.textContent = "原始观测报文";
+    radarBody.innerHTML = '<pre class="qx-tele qx2-tele" id="qx2-tele"></pre>';
+    const pre = $("qx2-tele");
+    if (SHOT) { pre.textContent = TELEGRAPH; return; }
+    let i = 0;
+    (function type() {
+      if (i <= TELEGRAPH.length) { pre.textContent = TELEGRAPH.slice(0, i); i++; setTimeout(type, 28); }
+    })();
+  }
+  function renderMeta(cells) {
+    metaEl.innerHTML = cells.map(c => `<div class="qx2-meta-cell"><div class="qx2-meta-v">${c[1]}</div><div class="qx2-meta-k">${c[0]}</div></div>`).join("");
+  }
+  function renderAlert(mode) {
+    if (mode === "now") {
+      alertBox.className = "qx2-alert calm";
+      alertBox.innerHTML = '<span class="qx2-alert-badge">提示</span>今日无气象预警 · 实时接入数据为示意值';
+    } else {
+      alertBox.className = "qx2-alert danger";
+      alertBox.innerHTML = '<span class="qx2-alert-badge">警报</span>严寒警报 · 战区夜间极端最低 零下四十摄氏度 · 非必要不外出';
+    }
+  }
+
+  function setTemp(value, animateFrom) {
+    if (animateFrom !== undefined && typeof gsap !== "undefined" && !SHOT) {
+      const o = { v: animateFrom };
+      gsap.to(o, { v: value, duration: 1.8, ease: "power2.inOut",
+        onUpdate: () => { tempEl.textContent = Math.round(o.v) + "℃"; } });
+    } else {
+      tempEl.textContent = value + "℃";
+    }
+  }
+
+  function showNow() {
+    document.body.classList.remove("frozen");
+    clock.textContent = `${now.getFullYear()}年${mNow}月${now.getDate()}日 周${WK[now.getDay()]} · 实时`;
+    placeEl.textContent = "长津湖地区（今朝鲜境内）";
+    setTemp(Math.round((todayHi + todayLo) / 2));
+    iconEl.innerHTML = ICONS[todayIcon];
+    textEl.textContent = todayMain;
+    heroDate.textContent = `今日 ${todayHi}℃ / ${todayLo}℃`;
+    renderMeta([["体感温度", (Math.round((todayHi + todayLo) / 2) - 2) + "℃"], ["湿度", "45%"], ["风速", todaySub.slice(0, 3)], ["空气质量", "良"]]);
+    renderHours("24小时预报", HOURS_NOW);
+    renderDays("7日预报", DAYS_NOW);
+    renderRadarNow();
+    renderAlert("now");
+  }
+
+  function showHist() {
+    document.body.classList.add("frozen");
+    clock.textContent = "档案时间 · 一九五〇年十一月二十七日";
+    placeEl.textContent = "长津湖地区 · 新兴里战区";
+    const from = parseInt(tempEl.textContent, 10);
+    setTemp(-27, isNaN(from) ? 0 : from);
+    iconEl.innerHTML = ICONS.coldsun;
+    textEl.textContent = "晴 · 极寒";
+    heroDate.textContent = "一九五〇年十一月二十七日";
+    renderMeta([["夜间最低", "零下四十"], ["湿度", "干燥"], ["风", "西北风"], ["积雪", "没膝"]]);
+    renderHours("当日实况", HOURS_HIST);
+    renderDays("逐日记录 · 一九五〇年十一月", TABLE.map(r => ({ dow: r.d, date: "", icon: r.icon, hi: r.t, lo: r.t, mark: r.d === "二十七日" })));
+    renderRadarHist();
+    renderAlert("hist");
+    msg.hidden = true;
+  }
+
+  /* ---------- 日历 ---------- */
+  const cal = $("qx2-cal"), grid = $("qx2-cal-grid"), input = $("qx2-input");
+  (function buildCal() {
+    const first = new Date(1950, 10, 1).getDay();
+    let html = ['日','一','二','三','四','五','六'].map(d => `<div class="qx-cal-dow">${d}</div>`).join("");
+    for (let i = 0; i < first; i++) html += '<div class="qx-cal-cell empty"></div>';
+    for (let d = 1; d <= 30; d++) html += `<button type="button" class="qx-cal-cell" data-d="${d}">${d}</button>`;
+    grid.innerHTML = html;
+    grid.querySelectorAll(".qx-cal-cell[data-d]").forEach(cell => {
+      cell.addEventListener("click", () => { input.value = `1950年11月${cell.dataset.d}日`; cal.hidden = true; input.focus(); });
+    });
+  })();
+  $("qx2-cal-btn").addEventListener("click", () => { cal.hidden = !cal.hidden; });
+  $("qx2-cal-close").addEventListener("click", () => { cal.hidden = true; });
+  document.addEventListener("click", e => {
+    if (!cal.hidden && !cal.contains(e.target) && e.target.id !== "qx2-cal-btn") cal.hidden = true;
+  });
+
+  /* ---------- 查询 ---------- */
+  function parseDate(s) {
+    s = s.trim();
+    let m = s.match(/(\d{4})\s*[年\-\/.]\s*(\d{1,2})\s*[月\-\/.]\s*(\d{1,2})/);
+    if (m) return { y: +m[1], m: +m[2], d: +m[3] };
+    m = s.match(/(\d{1,2})\s*月\s*(\d{1,2})\s*日?/);
+    if (m) return { y: 1950, m: +m[1], d: +m[2] };
+    m = s.match(/^(\d{1,2})\s*日?$/);
+    if (m) return { y: 1950, m: 11, d: +m[1] };
+    return null;
+  }
+
+  function showMsg(html) {
+    msg.innerHTML = html;
+    msg.hidden = false;
+    msg.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  function query() {
+    const s = input.value;
+    if (!s.trim()) { input.focus(); return; }
+    const date = parseDate(s);
+    if (!date) { showMsg("没看懂这个日期。换个写法试试。"); return; }
+    if (date.y === TARGET.y && date.m === TARGET.m && date.d === TARGET.d) { showHist(); return; }
+    if (date.y === now.getFullYear() && date.m === mNow && date.d === now.getDate()) {
+      showMsg("这一天就是今天。今天的天气，就在上面。");
+      return;
+    }
+    const known = date.y === 1950 && date.m === 11 && TABLE.some(r => r.d === (["二十日","二十二日","二十四日","二十六日","二十七日"][ [20,22,24,26,27].indexOf(date.d) ]));
+    if (known && date.d !== 27) {
+      const row = TABLE.find(r => ({ 20: "二十日", 22: "二十二日", 24: "二十四日", 26: "二十六日" })[date.d] === r.d);
+      showMsg(`「${date.y}年${date.m}月${date.d}日」——${row ? "晴，日平均 " + row.t + "℃。" : ""}<span class="qx2-msg-sub">再往后两天，冷得不一样了。日记里锁着的那一页，说的是哪一天？</span>`);
+      return;
+    }
+    showMsg(`「${date.y}年${date.m}月${date.d}日」——该日历史观测记录，未收录。<span class="qx2-msg-sub">档案库只数字化了一九五〇年十一月的部分观测。</span>`);
+  }
+
+  $("qx2-go").addEventListener("click", query);
+  input.addEventListener("keydown", e => { if (e.key === "Enter") query(); });
+
+  showNow();
+})();
+</script>
+</body>
+</html>

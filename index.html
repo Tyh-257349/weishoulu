@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>林家村村志网</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- 信封开场（默认隐藏；首次进入且浏览器存储可用时才由 JS 展开） -->
+<div id="envelope-overlay" class="hide">
+  <div class="envelope">
+    <div class="to">孩子 亲启</div>
+    <div class="intro-blocks">
+      <p>晴晴：</p>
+      <p>爷这一辈子，没跟你提过，你还有个大爷。他叫守拙。一九四七年，他跟着队伍走了；五〇年过的江，就再没回来。那年你爹才四岁。</p>
+      <p>家里不是把他忘了，是不敢提。你太奶奶在世的时候，谁提这个名字，她摔谁的碗。爷惦记了一辈子，到走，也没敢去村里问一声。</p>
+      <p>现在爷也不在了。这件事，只能交给你了。</p>
+      <p>从村志网查起。把他找回来，写进家谱——也让爷在底下，睡个安稳觉。</p>
+    </div>
+    <div class="sign">—— 爷　绝笔</div>
+    <button id="enter-village">进 村 志 网</button>
+  </div>
+</div>
+
+<!-- 村志网 -->
+<header class="site-banner">
+  <h1>林家村村志网</h1>
+  <div class="sub">LAIZHOU · LINJIACUN · 建站于二〇〇八年</div>
+</header>
+
+<nav class="site-nav">
+  <a href="index.html">首页</a>
+  <a href="cunqing.html">村情简介</a>
+  <a href="#guangrong">光荣榜</a>
+  <a href="dashiji.html">村志大事记</a>
+  <a href="guanyu.html">关于本站</a>
+</nav>
+
+<div class="wrap">
+
+  <div class="panel">
+    <h2 class="doc-title">村 务 动 态</h2>
+    <p style="text-indent:2em; font-size:.95rem; color:var(--ink-light)">
+      本栏目长期维护中。最近更新：三年前。<br>
+      <span style="font-size:.85rem">（此前动态已归档至村档案室，暂不提供在线查阅。）</span>
+    </p>
+  </div>
+
+  <!-- 光荣榜（谜题一）· 奖状框整版名单 -->
+  <div class="panel gr-panel" id="guangrong">
+    <div class="gr-cert">
+      <div class="gr-inner">
+        <h2 class="gr-title">光　荣　榜</h2>
+        <table class="gr-list">
+          <tr><th>姓名</th><th>入伍时间</th><th>备注</th></tr>
+          <tr><td class="gr-name">林守仁</td><td>一九四六年</td><td>解放战争时期入伍，后转业返乡</td></tr>
+          <tr><td class="redacted">████</td><td>一九四七年</td><td class="redacted">████████████</td></tr>
+          <tr><td class="gr-name">孙德海</td><td>一九四七年</td><td>解放战争时期入伍，后转业返乡</td></tr>
+          <tr><td class="gr-name">林守诚</td><td>一九五〇年</td><td>体检未过，留乡</td></tr>
+          <tr><td class="gr-name">王春来</td><td>一九五〇年</td><td>抗美援朝时期入伍，复原返乡</td></tr>
+        </table>
+      </div>
+    </div>
+    <p class="gr-caption">建国以来本村参军人员名录（据村志整理）</p>
+    <p class="gr-note">榜上一九四七年入伍的有两个人。其中一行的名字，被人用墨涂去了。</p>
+  </div>
+
+  <div class="panel">
+    <h2 class="doc-title">村志大事记（摘）</h2>
+    <ul class="timeline">
+      <li><span class="yr">一九四七年</span>春，村民林某之长子参军。</li>
+      <li><span class="yr">一九五〇年秋</span>，欢送本村入伍青年十三名。</li>
+      <li class="heavy"><span class="yr">一九五一年春</span>，村东林家获光荣牌一面。</li>
+    </ul>
+    <p style="text-align:center; margin-top:12px"><a href="dashiji.html">查看大事记全文 →</a></p>
+  </div>
+
+  <!-- 站内搜索（核心交互） -->
+  <div class="search-hero">
+    <h2 class="doc-title">站 内 检 索</h2>
+    <div class="search-box">
+      <input id="home-search-input" type="text" placeholder="输入关键词，如：人名、年份、事件">
+      <button id="home-search-btn">检 索</button>
+    </div>
+  </div>
+
+  <p class="reread-env">
+    想再看一遍爷的信？<a href="#" id="reread-env">重读</a>
+  </p>
+
+</div>
+
+<footer class="site-footer">
+  <span class="count">已找到线索 <span class="js-count">0</span> / 18</span>
+  <a href="guanyu.html">本站为艺术创作 · 点击查看声明</a>
+</footer>
+
+<button id="note-btn">寻访笔记</button>
+<div id="note-panel"><h3>寻访笔记</h3><ul id="note-list"></ul></div>
+
+<script src="js/gsap.min.js"></script>
+<script src="js/main.js"></script>
+<script>document.addEventListener("DOMContentLoaded", () => markClue("bang"));</script>
+</body>
+</html>

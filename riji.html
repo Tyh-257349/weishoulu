@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>战地日记 · 一册（残）</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-banner">
+  <h1>木匣 · 战地日记</h1>
+  <div class="sub">粗 蓝 布 封 皮</div>
+</header>
+
+<nav class="site-nav">
+  <a href="dangan.html">返回木匣</a>
+</nav>
+
+<div class="wrap">
+  <p class="puzzle-note">翻页。前面的路，他都替你记下来了。</p>
+
+  <div class="diary-wrap">
+    <div class="diary-page" id="diary-page"></div>
+    <div class="diary-nav">
+      <button id="diary-prev">← 上一页</button>
+      <button id="diary-next">下一页 →</button>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <span class="count">已找到线索 <span class="js-count">0</span> / 18</span>
+  <a href="guanyu.html">本站为艺术创作 · 点击查看声明</a>
+</footer>
+
+<button id="note-btn">寻访笔记</button>
+<div id="note-panel"><h3>寻访笔记</h3><ul id="note-list"></ul></div>
+
+<script src="js/gsap.min.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

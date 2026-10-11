@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>匣内 · 三封信与一册日记</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  /* 匣内视角：木匣红绒内衬的幽暗空间 */
+  .chest-interior {
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(122, 30, 26, .55), rgba(43, 12, 10, .92) 70%),
+      #2b0c0a;
+    border: 10px solid #4a2c17;
+    border-radius: 6px;
+    box-shadow: inset 0 0 80px rgba(0, 0, 0, .75), 0 14px 40px rgba(0, 0, 0, .35);
+    padding: 40px 28px 48px;
+  }
+  .chest-interior .puzzle-note { color: #d8c9a8 !important; }
+  .chest-interior .dangan-box { background: transparent; border: none; box-shadow: none; }
+  .chest-interior .env-face {
+    background: #e8dcbd;
+    border-color: #b09a6a;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .5);
+  }
+  .chest-interior .env-item a { color: #d8c9a8; }
+  .chest-interior .env-item a:hover { color: #f3e6c2; }
+  .chest-interior .feedback { color: #d8c9a8 !important; }
+  .chest-interior .doc-title { color: #e8d9b8; }
+  .interior-lead {
+    text-align: center; color: #cbb98f; letter-spacing: .15em;
+    font-family: "FangSong", "仿宋", serif; margin-bottom: 26px;
+  }
+  .interior-diary { border-top: 1px dashed rgba(216, 201, 168, .35); margin-top: 34px; padding-top: 8px; }
+  .interior-diary p { color: #cbb98f; }
+  .interior-diary a { color: #e8d9b8; }
+  .interior-photo { max-width: 420px; margin: 0 auto 30px; transform: rotate(-1.2deg); }
+  .interior-photo img {
+    width: 100%; display: block; border: 6px solid #e8dcbd;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, .55);
+  }
+  .interior-photo figcaption {
+    text-align: center; margin-top: 10px; font-size: .82rem;
+    color: #a89468; letter-spacing: .08em; font-family: "FangSong", "仿宋", serif;
+  }
+  .back-to-chest { display: block; text-align: center; margin-top: 30px; color: #a89468; font-size: .9rem; }
+</style>
+</head>
+<body>
+
+<header class="site-banner">
+  <h1>匣　内</h1>
+  <div class="sub">木 匣 最 底 层 的 东 西</div>
+</header>
+
+<nav class="site-nav">
+  <a href="dangan.html">返回木匣</a>
+  <a href="index.html">村志网</a>
+</nav>
+
+<div class="wrap">
+  <div class="panel chest-interior">
+    <p class="interior-lead">
+      手电的光圈落在匣底——牛皮纸档案袋敞着口，<br>
+      三封信，压着一册日记。纸都脆了，拿的时候不敢用力。
+    </p>
+
+    <figure class="interior-photo">
+      <img src="assets/env3-photo.jpg" alt="三封压在匣底的旧信封">
+      <figcaption>在匣底压了七十五年，封口有的拆了，有的再没拆过。</figcaption>
+    </figure>
+
+    <div class="dangan-box">
+      <p class="puzzle-note">三只信封。邮戳上的日期都磨没了，只剩几枚日期碎片。<br>
+      把碎片对回信封——日期在每封信的字里。</p>
+      <div class="stamp-row" id="stamp-chips"></div>
+      <div class="env-row">
+        <div class="env-item">
+          <div class="env-face" data-env="env1">
+            <span>信封　壹</span>
+            <span style="font-size:.78rem; color:#8a744a">盖"免费邮件"戳</span>
+            <span class="slot-date"></span>
+          </div>
+          <a href="jia1.html">读这封信 →</a>
+        </div>
+        <div class="env-item">
+          <div class="env-face" data-env="env2">
+            <span>信封　贰</span>
+            <span style="font-size:.78rem; color:#8a744a">盖"免费邮件"戳</span>
+            <span class="slot-date"></span>
+          </div>
+          <a href="jia2.html">读这封信 →</a>
+        </div>
+        <div class="env-item">
+          <div class="env-face" data-env="env3">
+            <span>信封　叁</span>
+            <span style="font-size:.78rem; color:#8a744a">无戳 · 未封口</span>
+            <span class="slot-date"></span>
+          </div>
+          <a href="jia3.html">读这封信 →</a>
+        </div>
+      </div>
+      <div class="feedback" id="dg-fb"></div>
+    </div>
+
+    <div class="interior-diary">
+      <h2 class="doc-title" style="font-size:1.1rem">日 记 一 册（残）</h2>
+      <p style="text-align:center; font-size:.92rem">
+        粗蓝布封皮，角磨白了。纸页里夹着雪渣和土。
+      </p>
+      <p style="text-align:center; margin-top:14px">
+        <a href="riji.html" style="font-size:1.05rem; letter-spacing:.2em">翻开日记 →</a>
+      </p>
+    </div>
+  </div>
+
+  <a class="back-to-chest" href="dangan.html">← 合上匣子，退出去</a>
+</div>
+
+<footer class="site-footer">
+  <span class="count">已找到线索 <span class="js-count">0</span> / 18</span>
+  <a href="guanyu.html">本站为艺术创作 · 点击查看声明</a>
+</footer>
+
+<button id="note-btn">寻访笔记</button>
+<div id="note-panel"><h3>寻访笔记</h3><ul id="note-list"></ul></div>
+
+<script src="js/gsap.min.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

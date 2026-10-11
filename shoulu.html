@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英烈名录 · 补录</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-banner">
+  <h1>村志网 · 英烈名录</h1>
+  <div class="sub">补 录 一 名 烈 士</div>
+</header>
+
+<nav class="site-nav">
+  <a href="index.html">返回村志网</a>
+</nav>
+
+<div class="wrap" id="shoulu-main">
+  <p class="puzzle-note">
+    七十五年了。他的名字，该由家里人一笔一画填上去。
+  </p>
+  <p style="text-align:center; font-family:'KaiTi','楷体',cursive; color:var(--ink-light); line-height:2; margin-bottom:20px;">
+    他的信息，七十五年里，家里人一点一点打听齐了。<br>
+    只剩最后一项，空着——<strong style="color:var(--red)">安葬地</strong>。
+  </p>
+
+  <form class="shoulu-form" id="shoulu-form">
+    <label>姓名</label>
+    <input id="s-name" readonly value="林守拙">
+
+    <label>籍贯</label>
+    <input id="s-native" readonly value="山东掖县林家村">
+
+    <label>所属部队</label>
+    <input id="s-army" readonly value="第二十七军（前身华东野战军第九纵队）">
+
+    <label>牺牲时间</label>
+    <input id="s-when" readonly value="一九五〇年十一月">
+
+    <label>牺牲战役</label>
+    <input id="s-battle" readonly value="长津湖战役新兴里战斗">
+
+    <label>安葬地</label>
+    <select id="s-rest">
+      <option value="">——请选择——</option>
+      <option>沈阳抗美援朝烈士陵园（二〇二五年春迁入）</option>
+      <option>长津湖畔就地安葬</option>
+      <option>山东掖县烈士陵园</option>
+    </select>
+
+    <p id="sl-fb" style="min-height:1.6em; margin-top:14px; font-family:'KaiTi','楷体',cursive;"></p>
+
+    <div style="text-align:center; margin:16px 0 30px;">
+      <button class="yiwu-submit" type="submit">录 入 名 录</button>
+    </div>
+  </form>
+</div>
+
+<div class="shoulu-done" id="shoulu-done">
+  <p class="big">已收录。</p>
+  <p class="sub2">他不再是"未收录"。</p>
+  <p style="margin-top:30px; font-family:'KaiTi','楷体',cursive;">
+    名录旁多了一行小字：「该条目由家属林晴补录于二〇二五年。」<br>
+    去看看<a href="chuxi.html" style="color:#9e2b25;">这一程的说明</a>。
+  </p>
+  <p style="margin-top:18px; color:#6a7684; font-size:.92rem;">
+    寻访笔记里，好像多了一页——「还有一样东西」。
+  </p>
+  <p style="margin-top:14px; font-family:'KaiTi','楷体',cursive; color:#5a4a35; line-height:2;">
+    小时候听爷说过一嘴：你太奶奶走的那年，把一双鞋包进蓝布包袱，压在柜底。<br>
+    谁也不给看。你爷收了一辈子，没敢打开。
+  </p>
+</div>
+
+<footer class="site-footer">
+  <span class="count">已找到线索 <span class="js-count">0</span> / 18</span>
+  <a href="guanyu.html">本站为艺术创作 · 点击查看声明</a>
+</footer>
+
+<button id="note-btn">寻访笔记</button>
+<div id="note-panel"><h3>寻访笔记</h3><ul id="note-list"></ul></div>
+
+<script src="js/gsap.min.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
