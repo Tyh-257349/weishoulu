@@ -74,9 +74,7 @@ function markClue(id) {
     localStorage.setItem("ws_found", JSON.stringify(f));
     renderCount(); renderNote();
     // 分幕门控：本幕线索全部找到，才弹出下一幕开启卡
-    const done = actIds => actIds.every(x => f.includes(x));
-    if (done(ACTS[0].ids)) showActCard("二", "异国", "人找到了，路还没走完。<br>把他走过的那一千多公里，从头走一遍。", "luxian.html");
-    if (done(ACTS[1].ids)) showActCard("三", "归来", "名册上补全了他，可他的安葬地，至今仍未收录。<br>带他回家。", "jianbao.html");
+    maybeActCards(f);
   }
 }
 function renderCount() {
@@ -116,6 +114,11 @@ function showActCard(act, title, sub, link) {
   card.addEventListener("click", e => { if (e.target === card) close(); });
 }
 
+function maybeActCards(f) {
+  if (ACTS[0].ids.every(x => f.includes(x))) showActCard("二", "异国", "人找到了，路还没走完。<br>把他走过的那一千多公里，从头走一遍。", "luxian.html");
+  if (ACTS[1].ids.every(x => f.includes(x))) showActCard("三", "归来", "名册上补全了他，可他的安葬地，至今仍未收录。<br>带他回家。", "jianbao.html");
+}
+
 function renderNote() {
   const box = document.getElementById("note-list");
   if (!box) return;
@@ -130,6 +133,7 @@ function renderNote() {
     const items = act.ids.map(id => clueRow(CLUES.find(c => c.id === id))).join("");
     return `<li class="act-head">${act.name}</li>` + items;
   }).join("");
+  maybeActCards(found);
   box.querySelectorAll("li.todo").forEach(li => {
     li.addEventListener("click", () => {
       const id = li.dataset.id;
@@ -197,6 +201,23 @@ const SEARCH_DB = [
     title: "影像 · 一九五〇年秋欢送参军青年合影",
     snap: "村里欢送十三名入伍青年。照片上的人，数一遍。",
     url: "heying.html" },
+  { keys: ["档案", "档案室", "老档案"],
+    title: "村档案室 · 村志大事记（手抄本）",
+    snap: "据村档案室藏手抄本整理，个别字迹漫漶。",
+    url: "dashiji.html" },
+  { keys: ["档案", "档案室", "老档案"],
+    title: "村档案室 · 光荣纪念证领取记录",
+    snap: "一九五一年三月。抚恤粮六百斤，按手印领讫。",
+    url: "lingqu.html" },
+  { keys: ["档案", "档案室", "老档案"],
+    title: "村档案室 · 一九五〇年字条（残）",
+    snap: "守拙托支前民工带回。原件存档案室，残。",
+    url: "zitiao.html" },
+  { keys: ["档案袋"],
+    title: "村档案室 · 朝鲜来信（档案袋）",
+    snap: "部队来信与战斗记录。入朝之后的路，在这里。",
+    url: "dangan.html",
+    gate: "luxian" },
   { keys: ["字条", "勿念", "泰安", "支前", "整训", "纸条", "家书"],
     title: "档案 · 一九五〇年十月带回字条一张",
     snap: "守拙托赴泰安支前的乡亲带回。字条残破，只剩几条。",
@@ -224,7 +245,7 @@ const SEARCH_DB = [
     snap: "五十年来最冷的冬天。那一天的冷，数字记得。",
     url: "qixiang.html",
     gate: "dangan" },
-  { keys: ["归国", "回家", "迎回", "接他", "剪报", "遗骨", "回来了"],
+  { keys: ["归来", "归国", "回家", "迎回", "接他", "剪报", "遗骨", "回来了"],
     title: "寻访笔记 · 爷爷的剪报本",
     snap: "二〇一四年以来，每一批归国的名单旁，都有爷爷的红笔。",
     url: "jianbao.html",
@@ -936,6 +957,18 @@ function initMinglu() {
     const q = input.value.trim();
     if (!q) return;
 
+    if (q.includes("归来") || q.includes("回家") || q.includes("剪报")) {
+      result.innerHTML =
+        card([
+          ["查阅结果", "爷爷的剪报本"],
+          ["内　容", "二〇一四年以来，每一批归国的名单旁，都有红笔。"],
+        ]) +
+        `<p class="minglu-hint">纸都黄了，红笔还新。<br>
+        <a href="jianbao.html" style="color:#9e2b25; text-decoration:underline; text-underline-offset:3px;">翻开剪报本</a>。</p>`;
+      markClue("gui");
+      return;
+    }
+
     if (q.includes("收录") || q.includes("补录")) {
       if (!getFound().includes("dna")) {
         result.innerHTML =
@@ -1013,7 +1046,7 @@ function initMinglu() {
           ["安葬地", "未收录", "missing"],
           ["战斗履历", "未收录", "missing"],
         ]) +
-        `<p class="minglu-hint">连部队都未收录。他一九四七年参的军——那年的事，村里的老档案里该有。</p>`;
+        `<p class="minglu-hint">连部队都未收录。他一九四七年参的军——那年的事，村里的<span class="hl">老档案</span>里该有。</p>`;
       markClue("minglu");
     } else {
       result.innerHTML =
