@@ -1453,3 +1453,7 @@ body:has(#guangrong:target) .search-hero { display: none; }
 
 .reread-env { text-align:center; font-size:.85rem; color:var(--ink-light); margin-top:18px; }
 body:has(#guangrong:target) .reread-env { display: none; }
+
+/* 寻访笔记：幕完成后的常驻进入链接 */
+.act-entry { list-style: none; padding: 2px 0 6px; }
+.act-entry a { color: #9e2b25; font-family: "KaiTi","楷体",cursive; font-size: .95rem; letter-spacing: .08em; text-decoration: underline; text-underline-offset: 3px; }

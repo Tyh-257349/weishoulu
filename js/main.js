@@ -73,8 +73,8 @@ function markClue(id) {
     f.push(id);
     localStorage.setItem("ws_found", JSON.stringify(f));
     renderCount(); renderNote();
-    // 分幕门控：本幕线索全部找到，才弹出下一幕开启卡
-    maybeActCards(f);
+    // 分幕门控：本幕线索全部找到，5 秒后自动弹出下一幕开启卡
+    maybeActCards(f, true);
   }
 }
 function renderCount() {
@@ -114,9 +114,13 @@ function showActCard(act, title, sub, link) {
   card.addEventListener("click", e => { if (e.target === card) close(); });
 }
 
-function maybeActCards(f) {
-  if (ACTS[0].ids.every(x => f.includes(x))) showActCard("二", "异国", "人找到了，路还没走完。<br>把他走过的那一千多公里，从头走一遍。", "luxian.html");
-  if (ACTS[1].ids.every(x => f.includes(x))) showActCard("三", "归来", "名册上补全了他，可他的安葬地，至今仍未收录。<br>带他回家。", "jianbao.html");
+function maybeActCards(f, delay) {
+  const fire = (act, title, sub, link) => {
+    if (delay) setTimeout(() => showActCard(act, title, sub, link), 5000);
+    else showActCard(act, title, sub, link);
+  };
+  if (ACTS[0].ids.every(x => f.includes(x))) fire("二", "异国", "人找到了，路还没走完。<br>把他走过的那一千多公里，从头走一遍。", "luxian.html");
+  if (ACTS[1].ids.every(x => f.includes(x))) fire("三", "归来", "名册上补全了他，可他的安葬地，至今仍未收录。<br>带他回家。", "jianbao.html");
 }
 
 function renderNote() {
@@ -129,12 +133,17 @@ function renderNote() {
     const inner = (isFound && c.link) ? `<a href="${c.link}" style="color:inherit">${label}</a>` : label;
     return `<li class="${isFound ? "found" : "todo"}" data-id="${c.id}">${inner}<div class="hint"></div></li>`;
   };
-  box.innerHTML = ACTS.map(act => {
+  box.innerHTML = ACTS.map((act, i) => {
     // 第18条（布鞋）在「收录」完成前隐藏——shoulu 页说的"多了一页"在此兑现
     const items = act.ids
       .filter(id => id !== "xie" || found.includes("shoulu"))
       .map(id => clueRow(CLUES.find(c => c.id === id))).join("");
-    return `<li class="act-head">${act.name}</li>` + items;
+    let head = `<li class="act-head">${act.name}</li>`;
+    if (i === 0 && act.ids.every(x => found.includes(x)))
+      head += `<li class="act-entry"><a href="luxian.html">▸ 进入第二幕 · 异国</a></li>`;
+    if (i === 1 && act.ids.every(x => found.includes(x)))
+      head += `<li class="act-entry"><a href="jianbao.html">▸ 进入第三幕 · 归来</a></li>`;
+    return head + items;
   }).join("");
   maybeActCards(found);
   box.querySelectorAll("li.todo").forEach(li => {
