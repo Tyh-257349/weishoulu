@@ -1226,6 +1226,10 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.removeItem("ws_started");
         localStorage.removeItem("ws_jia");
         localStorage.removeItem("ws_riji");
+        // 幕开启卡的"已弹过"标记也要清：不清的话重玩时第一/二幕做完不再弹卡
+        Object.keys(localStorage)
+          .filter(k => k.indexOf("ws_actcard") === 0)
+          .forEach(k => localStorage.removeItem(k));
         location.href = "index.html";
       }
     });
