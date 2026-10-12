@@ -1457,3 +1457,21 @@ body:has(#guangrong:target) .reread-env { display: none; }
 /* 寻访笔记：幕完成后的常驻进入链接 */
 .act-entry { list-style: none; padding: 2px 0 6px; }
 .act-entry a { color: #9e2b25; font-family: "KaiTi","楷体",cursive; font-size: .95rem; letter-spacing: .08em; text-decoration: underline; text-underline-offset: 3px; }
+
+
+/* 幕开启卡 · 老照片版式（照片上 / 文字下，照片"显影式"展开） */
+.act-card-inner { padding: 0; overflow: hidden; }
+.act-photo {
+  overflow: hidden; background: #241c12;
+  border-bottom: 1px solid #b8a06a;
+}
+.act-photo img {
+  display: block; width: 100%; height: auto;
+  animation: actPhotoUnfold 1.5s cubic-bezier(.25,.7,.3,1) .35s both;
+}
+@keyframes actPhotoUnfold {
+  from { clip-path: inset(0 0 100% 0); filter: sepia(.7) brightness(.65) contrast(.9); transform: scale(1.05); }
+  to   { clip-path: inset(0 0 0 0);     filter: sepia(.12) brightness(1);    transform: none; }
+}
+.act-card-body { padding: 26px 34px 30px; text-align: center; }
+button.act-go { border: none; cursor: pointer; font-family: "FangSong", "仿宋", serif; }

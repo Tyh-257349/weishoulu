@@ -92,25 +92,34 @@ const ACTS = [
 
 const hintLevel = {};
 
+const ACT_PHOTOS = { "一": "assets/act1-lijia.jpg", "二": "assets/act2-yiguo.jpg", "三": "assets/act3-guilai.jpg" };
 function showActCard(act, title, sub, link) {
   // 每幕只在第一次开启时弹一次
   try { if (localStorage.getItem("ws_actcard" + act)) return; localStorage.setItem("ws_actcard" + act, "1"); }
   catch (e) { return; }
+  const photo = ACT_PHOTOS[act];
+  const go = link
+    ? `<a class="act-go" href="${link}">进 入</a>`
+    : `<button class="act-go act-begin" type="button">开 始 寻 访</button>`;
+  const stay = link ? `<button class="act-stay" type="button">稍后再说</button>` : "";
   const card = document.createElement("div");
   card.className = "act-card";
   card.innerHTML = `
     <div class="act-card-inner">
-      <div class="act-kicker">第${act}幕 · 开启</div>
-      <h2 class="act-title">${title}</h2>
-      <p class="act-sub">${sub}</p>
-      <div class="act-btns">
-        <a class="act-go" href="${link}">进 入</a>
-        <button class="act-stay" type="button">稍后再说</button>
+      ${photo ? `<div class="act-photo"><img src="${photo}" alt=""></div>` : ""}
+      <div class="act-card-body">
+        <div class="act-kicker">第${act}幕 · 开启</div>
+        <h2 class="act-title">${title}</h2>
+        <p class="act-sub">${sub}</p>
+        <div class="act-btns">${go}${stay}</div>
       </div>
     </div>`;
   document.body.appendChild(card);
   const close = () => { card.classList.add("act-out"); setTimeout(() => card.remove(), 500); };
-  card.querySelector(".act-stay").addEventListener("click", close);
+  const stayBtn = card.querySelector(".act-stay");
+  if (stayBtn) stayBtn.addEventListener("click", close);
+  const beginBtn = card.querySelector(".act-begin");
+  if (beginBtn) beginBtn.addEventListener("click", close);
   card.addEventListener("click", e => { if (e.target === card) close(); });
 }
 
@@ -1176,12 +1185,16 @@ document.addEventListener("DOMContentLoaded", () => {
       sessionStorage.setItem("ws_session", "1");
     } catch (e) {}
     overlay.classList.add("hide");
+    // 信合上下接第一幕开启卡（照片：家门口的告别）——ws_actcard一 保证只弹一次
+    setTimeout(() => showActCard("一", "离家",
+      "一九四七年，他从这扇门里走出去，再没回来。<br>从村志网的第一条线索开始，把他找回来。", ""), 600);
   }
   if (overlay && enterBtn) {
     overlay.classList.add("fx"); // 加载完成后才开过渡，防止首屏闪
+    // 「进村志网」按钮始终绑定（首次自动弹信与手动重读都靠它关信）
+    enterBtn.addEventListener("click", closeEnv);
     if (!isShot && storageOK() && !started && !fromInside) {
       overlay.classList.remove("hide");
-      enterBtn.addEventListener("click", closeEnv);
     }
     // 重读入口（只展示，不改写"已读"状态）
     const reread = document.getElementById("reread-env");
