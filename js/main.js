@@ -115,6 +115,10 @@ function showActCard(act, title, sub, link) {
       </div>
     </div>`;
   document.body.appendChild(card);
+  // 幕开启 = 该幕第一条线索直接解锁，不必再回头检索（如第三幕的「归来」）
+  const FIRST_CLUE = { "一": "bang", "二": "luxian", "三": "gui" };
+  const fc = FIRST_CLUE[act];
+  if (fc) markClue(fc);
   const close = () => { card.classList.add("act-out"); setTimeout(() => card.remove(), 500); };
   const stayBtn = card.querySelector(".act-stay");
   if (stayBtn) stayBtn.addEventListener("click", close);
