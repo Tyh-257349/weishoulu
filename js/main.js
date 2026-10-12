@@ -130,7 +130,10 @@ function renderNote() {
     return `<li class="${isFound ? "found" : "todo"}" data-id="${c.id}">${inner}<div class="hint"></div></li>`;
   };
   box.innerHTML = ACTS.map(act => {
-    const items = act.ids.map(id => clueRow(CLUES.find(c => c.id === id))).join("");
+    // 第18条（布鞋）在「收录」完成前隐藏——shoulu 页说的"多了一页"在此兑现
+    const items = act.ids
+      .filter(id => id !== "xie" || found.includes("shoulu"))
+      .map(id => clueRow(CLUES.find(c => c.id === id))).join("");
     return `<li class="act-head">${act.name}</li>` + items;
   }).join("");
   maybeActCards(found);
