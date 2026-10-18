@@ -48,6 +48,25 @@
 <button id="note-btn">寻访笔记</button>
 <div id="note-panel"><h3>寻访笔记</h3><ul id="note-list"></ul></div>
 
+<audio id="chuxi-bgm" src="assets/chuxi-bgm.mp3" loop preload="none"></audio>
+<button id="bgm-btn" type="button" title="背景音乐">♪ 音乐 · 关</button>
+<script>
+(function () {
+  var audio = document.getElementById('chuxi-bgm');
+  var btn = document.getElementById('bgm-btn');
+  btn.addEventListener('click', function () {
+    if (audio.paused) {
+      audio.volume = 0.75;
+      audio.play();
+      btn.textContent = '♪ 音乐 · 开';
+    } else {
+      audio.pause();
+      btn.textContent = '♪ 音乐 · 关';
+    }
+  });
+})();
+</script>
+
 <script src="js/gsap.min.js"></script>
 <script src="js/main.js"></script>
 </body>
