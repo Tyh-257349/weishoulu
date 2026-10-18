@@ -1475,3 +1475,14 @@ body:has(#guangrong:target) .reread-env { display: none; }
 }
 .act-card-body { padding: 26px 34px 30px; text-align: center; }
 button.act-go { border: none; cursor: pointer; font-family: "FangSong", "仿宋", serif; }
+
+
+/* 出戏页背景音乐按钮 */
+#bgm-btn {
+  position: fixed; left: 14px; bottom: 14px; z-index: 9998;
+  background: rgba(38, 32, 24, .85); color: #e8dfc8;
+  border: 1px solid #b8a06a; cursor: pointer;
+  font-family: "KaiTi", "楷体", cursive; font-size: .85rem; letter-spacing: .1em;
+  padding: 6px 12px;
+}
+#bgm-btn:hover { background: rgba(58, 48, 34, .95); }
