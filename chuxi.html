@@ -48,22 +48,78 @@
 <button id="note-btn">寻访笔记</button>
 <div id="note-panel"><h3>寻访笔记</h3><ul id="note-list"></ul></div>
 
-<audio id="chuxi-bgm" src="assets/chuxi-bgm.mp3" loop preload="none"></audio>
-<button id="bgm-btn" type="button" title="背景音乐">♪ 音乐 · 关</button>
+<button id="bgm-btn" type="button" title="背景音乐">♪ 音乐 · 开</button>
 <script>
 (function () {
-  var audio = document.getElementById('chuxi-bgm');
   var btn = document.getElementById('bgm-btn');
-  btn.addEventListener('click', function () {
-    if (audio.paused) {
-      audio.volume = 0.75;
-      audio.play();
-      btn.textContent = '♪ 音乐 · 开';
-    } else {
-      audio.pause();
-      btn.textContent = '♪ 音乐 · 关';
+  var label = function (on) { btn.textContent = on ? '♪ 音乐 · 开' : '♪ 音乐 · 关'; };
+  var AC = window.AudioContext || window.webkitAudioContext;
+
+  if (AC) {
+    /* Web Audio：整段解码进内存，采样级循环，接缝零停顿 */
+    var ctx = new AC();
+    var gain = ctx.createGain();
+    gain.gain.value = 0.75;
+    gain.connect(ctx.destination);
+    var buf = null, src = null, playing = false, ready = false;
+
+    function start() {
+      if (!ready) return;
+      if (ctx.state === 'suspended') ctx.resume();
+      if (playing) return;
+      src = ctx.createBufferSource();
+      src.buffer = buf;
+      src.loop = true;
+      src.connect(gain);
+      src.start(0);
+      playing = true;
+      label(true);
     }
-  });
+    function stop() {
+      if (!playing) return;
+      try { src.stop(); } catch (e) {}
+      playing = false;
+      label(false);
+    }
+
+    fetch('assets/chuxi-bgm.mp3')
+      .then(function (r) { return r.arrayBuffer(); })
+      .then(function (ab) { return ctx.decodeAudioData(ab); })
+      .then(function (b) { buf = b; ready = true; start(); })
+      .catch(function () { label(false); });
+
+    /* 自动播放被浏览器拦住时，第一次点击/按键页面任意处即响起 */
+    function firstGesture() {
+      start();
+      window.removeEventListener('pointerdown', firstGesture);
+      window.removeEventListener('keydown', firstGesture);
+    }
+    window.addEventListener('pointerdown', firstGesture);
+    window.addEventListener('keydown', firstGesture);
+
+    btn.addEventListener('click', function () { playing ? stop() : start(); });
+  } else {
+    /* 老浏览器回退：<audio> 循环 */
+    var audio = document.createElement('audio');
+    audio.src = 'assets/chuxi-bgm.mp3';
+    audio.loop = true;
+    audio.volume = 0.75;
+    var on = false;
+    function tryPlay() {
+      var p = audio.play();
+      if (p && p.then) p.then(function () { on = true; label(true); }).catch(function () { label(false); });
+      else { on = true; label(true); }
+    }
+    tryPlay();
+    window.addEventListener('pointerdown', function once() {
+      if (!on) tryPlay();
+      window.removeEventListener('pointerdown', once);
+    });
+    btn.addEventListener('click', function () {
+      if (on || !audio.paused) { audio.pause(); on = false; label(false); }
+      else tryPlay();
+    });
+  }
 })();
 </script>
 
